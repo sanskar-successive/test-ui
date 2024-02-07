@@ -2,26 +2,12 @@ import { Table, Space, Button, Popconfirm, message, Empty, Skeleton, EditOutline
 import { BookService } from '../../Service';
 import useFetchBook from '../../hooks/useFetchBook';
 import { useNavigate } from 'react-router-dom'
-import { lazy } from 'react';
 import { getListPageColumns } from '../../utils/listPageColumns';
 import { sortOptions } from '../../utils/sortOptions';
-
 import Filters from './components/Filters';
-
 import SearchBar from './components/Search';
-
-// const SearchBar = lazy(() => import('./components/Search'));
-
 import TablePagination from './components/Pagination';
-// const TablePagination = lazy(() => import('./components/Pagination'));
-
 import Sort from './components/Sort';
-// const Sort = lazy(() => import('./components/Sort'));
-
-// const Filters = lazy(() => import('./components/Filters'));
-
-
-
 
 const List = () => {
 
@@ -35,7 +21,7 @@ const List = () => {
     }
 
     if (error) {
-        return <Empty description="Something went wrong" />
+        return <Empty description="Sorry no result found" />
     }
 
     if (count === 0) {
@@ -46,14 +32,11 @@ const List = () => {
     {
         title: 'Action',
         dataIndex: '_id',
-        key: 'action',
+        key: '_id',
         render: (_, { _id }) => (
             <Space size="small" >
-                {/* <Button onClick={() => navigate(`/book/${_id}`)} ><EyeOutlined /></Button> */}
-                <Button onClick={() => navigate(`/book/${_id}`)} >View</Button>
-
-                {/* <Button onClick={() => navigate(`/add-book/${_id}`)} ><EditOutlined /></Button> */}
-                <Button onClick={() => navigate(`/add-book/${_id}`)} >Edit</Button>
+                <Button onClick={() => navigate(`/book/${_id}`)} ><EyeOutlined /></Button>
+                <Button onClick={() => navigate(`/add-book/${_id}`)} ><EditOutlined /></Button>
 
                 <Popconfirm
                     title="Delete the Book"
@@ -61,23 +44,21 @@ const List = () => {
                     onConfirm={async () => {
 
                         try {
-                            console.log("deleted");
                             await BookService.deleteBook(_id);
-                            await message.success('Deleted successfully');
+                            message.success('Deleted successfully');
                             window.location.reload();
+
                         } catch (error) {
                             message.error(error.message);
                         }
                     }}
                     onCancel={() => {
-                        console.log("cancelled");
                         message.error('Operation cancelled');
                     }}
                     okText="Yes"
                     cancelText="Cancel"
                 >
-                    {/* <Button danger><DeleteOutlined /></Button> */}
-                    <Button danger>delete</Button>
+                    <Button danger><DeleteOutlined /></Button>
 
                 </Popconfirm>
             </Space>
@@ -85,8 +66,8 @@ const List = () => {
     },
     ]
 
-
     return (
+
         <Space direction='vertical'>
 
             <SearchBar />
@@ -94,14 +75,12 @@ const List = () => {
 
             <Space direction='horizontal'>
                 <Filters />
-                {/* <Space direction='vertical'> */}
                 <Table dataSource={book} columns={listPageColumns} pagination={false} />
-                {/* <TablePagination totalItems={count} /> */}
-                {/* </Space> */}
             </Space>
             <TablePagination totalItems={count} />
 
         </Space>
+
     )
 }
 

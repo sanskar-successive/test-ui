@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { Title, Space, Segmented } from '../../../../../lib/generics';
-// import { sortOptions } from '../../../utils/sortOptions';
 
 
 const Sort = ({sortOptions}) => {
@@ -43,3 +42,5 @@ const Sort = ({sortOptions}) => {
 };
 
 export default memo(Sort);
+// export default Sort;
+

@@ -38,3 +38,4 @@ const SearchBar = () => {
 }
 
 export default memo(SearchBar);
+// export default SearchBar;

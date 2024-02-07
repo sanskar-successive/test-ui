@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { Pagination } from "../../../../../lib/generics";
-import PropTypes from "prop-types";
+
 
 
 const TablePagination = ({ totalItems }) => {
@@ -94,11 +94,5 @@ const TablePagination = ({ totalItems }) => {
   )
 
 }
-
-TablePagination.propTypes = {
-  totalItems: PropTypes.number.isRequired,
-};
-
-
 
 export default memo(TablePagination);

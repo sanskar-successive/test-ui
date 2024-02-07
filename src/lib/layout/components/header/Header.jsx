@@ -11,9 +11,8 @@ const LayoutHeader = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("AUTH-TOKEN");
-        navigate('/auth', {replace:true})
+        navigate('/login', {replace:true})
     };
-
 
     return (
 

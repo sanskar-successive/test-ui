@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import useCreateBook from '../../hooks/useCreateBook';
 import { Button, Card, Checkbox, DatePicker, Empty, Form, Input, InputNumber, PlusOutlined, Rate, Result, Select, Spin, TextArea, Upload } from '../../../../lib/generics';
@@ -50,7 +50,7 @@ const AddBook = () => {
         return <Result status="error" title="Submission Failed" />
     }
 
-    if (Object.keys(response).length>0) {
+    if (Object.keys(response).length > 0) {
         return <Result status="success" title="Form submitted successfully" />
     }
 
@@ -132,38 +132,29 @@ const AddBook = () => {
                 </Form.Item>
 
                 <Form.Item label="Page Count" name={['moreDetails', 'pages']} rules={[{ required: true, type: 'number' }]}>
-                    <InputNumber />
+                    <InputNumber min={0} />
                 </Form.Item>
 
                 <Form.Item label="File Size" name={['moreDetails', 'fileSize']} rules={[{ required: true, type: 'number' }]}>
-                    <InputNumber />
+                    <InputNumber min={0} />
                 </Form.Item>
 
 
                 <Form.Item label="Verified" valuePropName="checked" name={['moreDetails', 'verified']}>
                     <Checkbox />
                 </Form.Item>
-
+{/* 
                 <Form.Item label="Cover Image" name={'coverImage'} valuePropName="fileList" getValueFromEvent={normFile}>
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button
-                            style={{
-                                border: 0,
-                                background: 'none',
-                            }}
-                            type="button"
-                        >
-                            <PlusOutlined />
-                            <div
-                                style={{
-                                    marginTop: 8,
-                                }}
-                            >
-                                Select
-                            </div>
-                        </button>
+                    <Upload
+                        maxCount={1}
+                        listType="picture"
+                    >
+                        <Button>Select File</Button>
                     </Upload>
-                </Form.Item>
+
+                </Form.Item> */}
+
+
 
 
                 <Form.Item
@@ -179,7 +170,7 @@ const AddBook = () => {
 
 
             </Form>
-        </Card>
+        </Card >
     );
 };
 export default AddBook;

@@ -1,28 +1,14 @@
-import React from 'react'
-import { Card, Checkbox, InputNumber, Button, Title } from '../../../../../lib/generics'
+import React, { useMemo } from 'react'
+import { Card, Checkbox, InputNumber, Button } from '../../../../../lib/generics'
 import { Form } from 'antd';
 import { useLocation, useSearchParams } from "react-router-dom";
 import { memo } from 'react';
 import { categories } from '../../../utils/categories';
 import { languages } from '../../../utils/languages';
+import { debounce } from 'lodash';
 
 
-
-const Filters = () => {
-
-    const location = useLocation();
-
-    const [queryParams, setQueryParams] = useSearchParams(location.search);
-
-    if (queryParams.has("skip")) {
-        queryParams.delete("skip");
-    }
-    if (queryParams.has("limit")) {
-        queryParams.delete("limit");
-    }
-
-
-
+const preFillFilters = (queryParams) => {
     let initialValues = {
         price: { from: queryParams.has("price.from") ? Number(queryParams.get("price.from")) : 50, to: queryParams.has("price.to") ? Number(queryParams.get("price.to")) : 2000 },
         rating: { aboveThree: queryParams.has("rating", "aboveThree"), aboveFour: queryParams.has("rating", "aboveFour") },
@@ -48,11 +34,30 @@ const Filters = () => {
             bengali: queryParams.has("language", "bengali"),
         },
     }
+    return initialValues
+}
+
+const setSkipAndLimit = (queryParams) => {
+    if (queryParams.has("skip")) {
+        queryParams.delete("skip");
+    }
+    if (queryParams.has("limit")) {
+        queryParams.delete("limit");
+    }
+}
+
+const Filters = () => {
+
+    const location = useLocation();
+
+    const [queryParams, setQueryParams] = useSearchParams(location.search);
+
+    setSkipAndLimit(queryParams);
+    const initialValues = useMemo(() => preFillFilters(queryParams), [queryParams]);
 
 
 
-    const handleApplyFilters = (value) => {
-        console.log("filters", value);
+    const handleApplyFilters = debounce((value) => {
 
         Object.entries(value).forEach((item) => {
             if (item[0] === "price") {
@@ -60,7 +65,10 @@ const Filters = () => {
                     if (queryParams.has("price.from")) {
                         queryParams.delete("price.from");
                     }
-                    queryParams.set("price.from", item[1].from);
+                    if(!item[1].from)
+                        queryParams.set("price.from", 50);
+                    else
+                        queryParams.set("price.from", item[1].from);
                 } else {
                     queryParams.delete("price.from");
                 }
@@ -68,7 +76,10 @@ const Filters = () => {
                     if (queryParams.has("price.to")) {
                         queryParams.delete("price.to");
                     }
-                    queryParams.set("price.to", item[1].to);
+                    if(!item[1].to)
+                    queryParams.set("price.to", 2000);
+                    else if(item[1].from && item[1].to < item[1].from) queryParams.set("price.to", 2000);
+                    else queryParams.set("price.to", item[1].to);
                 } else {
                     queryParams.delete("price.to");
                 }
@@ -92,26 +103,18 @@ const Filters = () => {
                 });
             }
         });
-
-
-
         setQueryParams(queryParams);
-    }
+    },300)
 
 
     return (
-        <Card
-            style={{ marginRight: 50 }}
-        >
-            <Title level={5}>Filters</Title>
-
-
+        <Card>
+            <p>Filters</p>
             <Form
                 onFinish={handleApplyFilters}
                 initialValues={initialValues}
             >
-
-                <Title level={5}>Price Range</Title>
+                <p>Price range</p>
                 <Form.Item name={["price", "from"]}>
                     <InputNumber min={50} max={2000} />
                 </Form.Item>
@@ -120,7 +123,7 @@ const Filters = () => {
                     <InputNumber min={50} max={2000} />
                 </Form.Item>
 
-                <Title level={5}>Rating</Title>
+                <p>Rating</p>
                 <Form.Item valuePropName='checked' name={["rating", "aboveThree"]}>
                     <Checkbox >3+</Checkbox>
                 </Form.Item>
@@ -129,20 +132,19 @@ const Filters = () => {
                     <Checkbox >4+</Checkbox>
                 </Form.Item>
 
-                <Title level={5}>Category</Title>
+                <p>Category</p>
                 {categories.map((item) => {
                     return (
-                        <Form.Item valuePropName='checked' name={["category", `${item}`]}>
+                        <Form.Item key={item} valuePropName='checked' name={["category", `${item}`]}>
                             <Checkbox >{item}</Checkbox>
                         </Form.Item>
                     )
                 })}
 
-                <Title level={5}>Language</Title>
-
+                <p>Language</p>
                 {languages.map((item) => {
                     return (
-                        <Form.Item valuePropName='checked' name={["language", `${item}`]}>
+                        <Form.Item key={item} valuePropName='checked' name={["language", `${item}`]}>
                             <Checkbox >{item}</Checkbox>
                         </Form.Item>
                     )
@@ -161,3 +163,4 @@ const Filters = () => {
 }
 
 export default memo(Filters);
+// export default Filters;

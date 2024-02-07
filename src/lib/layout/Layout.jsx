@@ -2,17 +2,38 @@ import React from 'react';
 import LayoutHeader from './components/header/Header';
 import Sidebar from './components/sider/Sidebar';
 import PageContent from './components/content/Content';
-import { Layout } from '../generics';
+import { Layout, Content, message } from '../generics';
+import useFetchUserAccount from '../../module/user/hooks/useFetchUserAccount';
+import { UserService } from '../../module/user/Service';
 
 
-const PageLayout = ({content}) => {
+const PageLayout = ({ content }) => {
+
+
+  const checkAuth = async () => {
+    try {
+      const { data } = await UserService.getUserAccount();
+      if(data){
+        window.location.assign('/');
+      }
+    } catch (error) {
+      message.error('something went wrong')
+      window.location.assign('/login')
+    }
+  }
+
+  if (window.location.pathname === '/login') {
+    checkAuth();
+  }
+
+
   return (
     <Layout>
-      <LayoutHeader/>
+      <LayoutHeader />
       <Layout>
-        <Sidebar/>
+        <Sidebar />
         <Layout>
-          <PageContent>{content}</PageContent>
+          <Content>{content}</Content>
         </Layout>
       </Layout>
     </Layout>
